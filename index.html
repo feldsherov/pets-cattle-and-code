@@ -1,40 +1,377 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+	<title>reveal.js</title>
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/simple.css">
+	<link rel="stylesheet" href="presentation/css/terminal.css">
+	<!--<link rel="stylesheet" href="presentation/css/img class="r-strech".css">-->
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	<script src="plugin/highlight/highlight.js"></script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<section>
+					<h2>Hi, I am Svyat!</h2>
+				</section>
+
+				<section>
+					<img src="./images/svyat_work_timeline.svg" />
+				</section>
+
+				<section>
+					<h2> New cpp feature arrived, how to stop use old feature? </h2>
+
+					<aside class="notes">
+						- constexpr string_view constructor
+						- template from c stings and cpp20
+					</aside>
+				</section>
+
+				<section>
+					<h2> How to minory improve API used all over the code? </h2>
+
+					<aside class="notes">
+						- This argument is never nullptr, let's make it reference?
+						- I am adding 6th arg, is it time for options struct?
+					</aside>
+				</section>
+
+				<section>
+					<h2> ~1000 OTel spans constructed from strings literals... </h2>
+				</section>
+
+				<section>
+					<h2> Maybe huge codebases are corporation disease... </h2>
+				</section>
+
+				<section>
+					<h2>Linux kernel lines of code</h2>
+					<pre><code data-trim data-noescape>
+					~/linux$ cloc .
+					139223 text files.
+					138000 unique files.
+					55315 files ignored.
+
+					github.com/AlDanial/cloc  T=107.20 s
+					-----------------------------------------------
+					Language      files    blank  comment      code
+					-----------------------------------------------
+					C             38638  3342054  2581107  17414033
+					C/cpp Header  23565   705113  1339694   6954666
+					Assembly       1337    48551   102434   1862752
+				</code></pre>
+
+				</section>
+
+				<section>
+					<h2>NodeJS lines of code</h2>
+					<pre><code data-trim data-noescape>
+						~/node$ cloc .
+						42602 text files.
+						38366 unique files.
+						9832 files ignored.
+
+						github.com/AlDanial/cloc  T=28.45s
+						---------------------------------------------
+						Language      files   blank  comment     code
+						---------------------------------------------
+						cpp            3094  254539   240197  2023156
+						Perl            619   32748    28272  1784382
+						JavaScript    19270  218078   288933  1763057
+						C/cpp Header   3987  155374   338166   751333
+						C              2104  106491    93472   650332
+
+				</code></pre>
+
+				</section>
+
+				<section>
+					<h2> How to make life simpler? </h2>
+				</section>
+
+				<section>
+					<h2>Let's treat code as cattle!</h2>
+					<img src="./images/cattle.webp" />
+				</section>
+
+				<section>
+					<h2> Find </h2>
+					<h2> Fix and enforce </h2>
+					<h2> Generate </h2>
+
+				</section>
+
+			</section>
+
+			<section>
+				<section>
+					<h2>Theory!</h2>
+					<img src="./images/theory.webp" />
+				</section>
+
+				<section>
+					<h2>There are gpep, sed and company! Isn't it enounghs?</h2>
+				</section>
+
+				<section>
+					<h5>std::condition_variable::wait<h5>
+
+						<pre><code class="language-cpp" data-trim data-noescape >
+						class Worker {
+
+							void work() {
+								std::unique_lock lock{mt_};
+								if (condition) {
+									cv_.wait(lock);
+								}
+								...
+							}
+
+							std::mutex mt_;
+							std::condition_variable cv_;
+						};
+						</code></pre>
+				</section>
+
+				<section>
+					<h5>std::condition_variable::wait<h5>
+
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="5">
+						class Worker {
+
+							void work() {
+								std::unique_lock lock{mt_};
+								if (condition) { // <- spurious wake up issue
+									cv_.wait(lock);
+								}
+								...
+							}
+
+							std::mutex mt_;
+							std::condition_variable cv_;
+						};
+						</code></pre>
+				</section>
+
+				<section>
+					<pre><code class="language-bash" data-trim data-noescape>
+						grep -rHn --include "*.cc" --include "*.h" 'wait()'
+					</code></pre>
+				</section>
+
+				<section>
+					<h5>Somehere in forgoten library<h5>
+							<pre><code class="language-cpp" data-trim data-noescape >
+						void wait() {
+							...
+						}
+						</code></pre>
+				</section>
+
+				<section>
+					<h5>Or in the code of intern from 3 years ago<h5>
+							<pre><code class="language-cpp" data-trim data-noescape >
+						int benid_horizons() {
+							...
+							std::cout << "really useful debug about wait()" << std::endl;
+						}
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>And fell to depression<h2>
+							<img src="./images/depression.webp" />
+
+				</section>
+
+				<section>
+					<h2>Compilation process</h2>
+					<div class="r-stack">
+						<img class="fragment fade-in-then-out" src="./images/compilation_process_first.svg" />
+						<img class="fragment fade-in-then-out" src="./images/compilation_process_second.svg" />
+						<img class="fragment fade-in-then-out" src="./images/compilation_process_third.svg" />
+						<img class="fragment fade-in-then-out" src="./images/compilation_process_forth.svg" />
+						<img class="fragment fade-in-then-out" src="./images/compilation_process_fifth.svg" />
+						<img class="fragment fade-in-then-out" src="./images/compilation_process_sixth.svg" />
+						<img class="fragment fade-in-then-out" src="./images/compilation_process_end.svg" />
+					</div>
+				</section>
+
+				<section
+					data-background-iframe="https://godbolt.org/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGEgJykrgAyeAyYAHI%2BAEaYxCBmpAAOqAqETgwe3r4ByanpAqHhUSyx8Yl2mA4ZQgRMxARZPn5cgZXVArX1BEWRMXEJtnUNTTmtQ929JWUJAJS2qF7EyOwcYQQA1CxMYRCzGyYA7FYaAIIbFxvrG0wHAMwAIhtmB5bPJncn55fEmARLDA2Gg%2BXyODw481onAArLw/BwtKRUJw3NZrBsFItlphXnceKQCJoIfMANYgaEaAB0hwAHAA2aE0u7Qln%2BaFcO53fScSRwolIzi8BQgDQEonzOCwJBMBQEciUNAsJJ0OIRVirVT0gC0dMkG2QBimg class="r-strech"y4h0pVPxmHwRGIeHQen4ghEYnYUhkgkUKnUCJ0enajmcEFcoxaQQY6Cm/XiXDyaX9mU8zT0KVjGQjpQG0b9NWGjQTY1smHsca6DTTM0zOeDvpzZYz8wIv0wtpFkJhfO9Ao4p1lGwAanhMAB3OIbTV0nV6g2GYDG03mjYQXCEEi46MbDxKlXEVezXiE70SpCK5X0MgUCDHrcoQ3AE0aaM0WgEOLCiDRfnRML1ACenHxn%2BYYhvwAeWibQqn3fFFTYQRgIYWhfw7LBoi8YA3DEWhhW4XgsG2IxxCQvBfmqAA3TAsMRTBVCqLxnz/Xh1kLflaDwaJiB/DwsH5Bs8BYejSDI4holSTAHkwPDgBYoxxT4AxgAUfsh2ApJGH4h1hFEcRXXUj01H5XRoxvFA0UsfRWOFSB5lQJI4ywrUqCSeolC1DCtWgxgCAUXhUEEm0sAsvYCyLDIXDDKtoxCMI%2BnTKMYwKeNshDZN4trWKs06Ss8xDdKGBLHooumDMJhGLLq0mArIwkeZMSWFYqu5DhYVIeFEWRDhR21XV9RvWczUpLgFyXa0dz3cVSRASR/EpMwOUkLhdUkSQNEkelDjpBreWa/k2qFEUxQPVsODMdtWsFfatFmeZBLSZxJCAA"
+					data-background-interactive>
+				</section>
+
+				<section>
+					<h2>Let's try to use it!</h2>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h2>Find</h2>
+					<img src="./images/find.webp" />
+				</section>
+
+				<section>
+					<h2>Matcher for wait problem</h2>
+					<pre><code class="language-isbl+" data-trim data-noescape data-line-numbers="1|2|3|4|5|6|9">
+						m callExpr(
+							callee(
+								cxxMethodDecl(
+									allOf(
+										hasName("wait"),
+										ofClass(hasName("std::condition_variable")))
+									)
+							),
+							argumentCountIs(1)
+						)
+
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h5>Lost exceptions<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						try {
+							do_something();
+						} except {
+							eat_exception_and_smile();
+						}
+						</code></pre>
+				</section>
+
+
+				<section>
+					<pre><code language="language-isbl" data-trim data-noescape data-line-numbers="1|2|3|4">
+						m cxxCatchStmt(
+							unless(
+								hasDescendant(
+										cxxThrowExpr()
+								)
+							)
+						)
+					</code></pre>
+				</section>
+
+				<section
+					data-background-iframe="https://godbolt.org/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGe1wAyeAyYAHI%2BAEaYxBIAbKQADqgKhE4MHt6%2BekkpjgJBIeEsUTFc8XaYDmlCBEzEBBk%2Bfly2mPZ5DDV1BAVhkdFxtrX1jVktCsM9wX3FA2UAlLaoXsTI7BzmAMzByN5YANQmm26YqmsJHUfYJhoAgje3wQT7VBBPL3jEE6T770poDHQh02ABF9mZ5ocAOxWO77eH7YiYAgrBgfL7Paz7f4CdBHWH3KEgh4Pd4sJjBCCQkwwh4I/YEYgAT2hBPp9NeXHm%2BLpCJpYNEBGQCH2EABE2xBHQIBAp3OlzMsX2mGptLh7PhrwhPPVGoA9HqGQhiKgAO46270/m8%2BFIlHENEaC3Wu4cRa0TgAVl4fg4WlIqE4bmsWIUy1WmEOZk2PFIBE0bsWAGsQJIzAA6ACcZQ0AA5M5nc57JJtNp74h6OJIfQmA5xeAoQBo4wnFnBYEgmN8KGLUCwEnRoqFWOtVLnYgBaWKSfa7QzAfZcKHpjTp2OYfBEYh4aUtfiCERidhSGSCRQqdR%2BnR6CpVZwQVyjZqkQLTIolbLJVICJ%2Bf3JpXp3zmVp2mqSZf3GNpKg6Lp6kA/pSiGboIKQuC3wQiRFkZTBMB3Jt3S9GsrzrDhbglAA1PBMFNaJ9jHSdp1nAwjEXZdVy4UVcEIEgoxjH4PH7QdiF4rleHjK82yQNBBPoMge2kgdZJQZjgCXDQ9zoAhokbCAIlrCJgjqJlOFjAzmGZAB5CJtGgkzeGkthBAshhaGM4isAiLxgDcMRaEbbheCwckjHEdzPmgvAADdMH8/1TkqLwtLs8hBDaWtaDwCJiCMjwsFrRk8BYZLouICJkkwEFMGC4AMqMVs%2BAMYAFEo6iLISRhkv3YRRHEE8uvPNRa10FoVJQENLH0TLG0gRZUAuNJ/InKgEjqJQJ18icHMYAgFF4VASu3LBpqpECIvvR9PCafxAXg2ZEJyb90kusZEi/Dpbo/SDQIEWCGme59bxgyYPuAiZkP%2Bm9gfQu7MKWFY1lhytvVIX1/UDDg6PHKcZznFilxXNdOM3HitlElsJMWBBMCYLAYhOlMzFzdMzE9TYNEzFmoU2KESyhWJc30Thq1IIquA0ZtUb2%2BtbCbcmtDbGAoEViAkCITwAEkGASRKWtNchKAUoT1d3U9uqPCRpH6pRBuI4bTrvPwH0BFDX0KDCoVe/8fwhloHve6GPw9wGwPBzIAagh3fpBmIg/An3UKmN2YahLDUA16VceAABHLxoiZRkvAYJM4zT2hhzYEAABVS4Ijhkclkjq88fZNe154m9oUUBMU2jSfmMTW2TEAy3TadNkLSRcy4MwuE9DRGcFqteCKueUdrdGG1l8T5dIdtEBANXaH1iA6ia6XT4UZRDDaIQEDNBvDdk8vRyxxjM9Ygn12Jw69C6w9estrIAal5/R2xYAIJgaAuJbgABJdgsDhBgtxEqoDaowDctZwHMCgd/NBDcsGQNQDUfADcJgkM4CwWcqhVA%2BSFAgGoLACAQBtPsQu9AFAKGYbqdkCAuyVQUGsQEhgmEsI1PCZA1DK7GjNNgVQCRiBUlEQibk3CVG3DUQ2KUwQr4hFoLfe%2B%2BVS7G2UvOHOecC5FzjEiXC0pmymmygkOytd67r04JnCcZjmSigsUmSE9FsZMXnB/diRNuLCVJvxPsPdwnRjJtvRMpAqY0wGCdSswsV4S1cRwTezZ4nzCHozdMuY2ZTx5pIPMZhFQC0rJsIiaNpZ5NrmYOpUtslywSSVFIzhJBAA%3D"
+					data-background-interactive>
+				</section>
+
+				<section>
+					But how to use it real project?
+				</section>
+
+				<section>
+					Conclusion
+				</section>
+
+
+			</section>
+
+			<section>
+				<section>
+					<h2>Fix</h2>
+					<img src="./images/fix.webp" />
+				</section>
+
+				<section>
+					<h5>Pointer to reference argument<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						void AwesomeFunc(SomeObject* object);
+						void AwesomeFunc(SomeObject& object);
+
+						int main() {
+							SomeObject object;
+							AwesomeFunc(&object);
+						}
+					</code></pre>
+				</section>
+
+				<section>
+					<h5>Matcher<h5>
+							<pre><code class="language-isbl" data-trim data-noescape data-line-numbers>
+						m callExpr(
+								callee(
+									functionDecl(
+										hasName("AwesomeFunc")
+									)
+								),
+								hasArgument(
+									0, expr(
+											hasType(pointerType())
+									).bind("argument")
+								)
+							)
+					</code></pre>
+				</section>
+
+				<section>
+					<h5>Transformation<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+								changeTo(
+									node("argument"),
+									transformer::maybeDeref("argument")
+								)
+					</code></pre>
+				</section>
+
+				<section>
+					<h5>Whole interesting part of code<h5>
+					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+					std::string ArgId = "arg";
+					auto Rule = makeRule(
+							callExpr(callee(functionDecl(hasName("AwesomeFunc"))),
+												hasArgument(0,
+													expr(hasType(pointerType())).bind(ArgId))),
+							changeTo(node(ArgId), transformer::maybeDeref(ArgId)));
+
+					Transformer TransformerInstance(
+						Rule,
+						[&AllChanges](Expected<llvm::MutableArrayRef<AtomicChange>> Changes) {
+							AllChanges.insert(
+								AllChanges.end(),
+								std::make_move_iterator(Changes->begin()),
+								std::make_move_iterator(Changes->end()));
+					});
+					</code></pre>
+				</section>
+
+
+			</section>
+
 		</div>
+	</div>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+		});
+	</script>
+</body>
+
 </html>
