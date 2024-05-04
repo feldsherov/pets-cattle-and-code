@@ -465,11 +465,81 @@
 
 					<div style="text-align: left">
 						<lo>
-							<li class="fragment">  Clang-transform like "search and replace" powered by ClangMatchers.  </li>
+							<li class="fragment"> Clang-transform like "search and replace" powered by ClangMatchers.  </li>
 							<li class="fragment"> Clang-tidy support from the box </li>
 							<li class="fragment"> Relatively hard to build the first tool </li>
+							<li class="fragment"> Good choice to use in your pre-submit. </li>
 						</lo>
 					</div>
+				</section>
+
+				<section>
+					<section>
+						<h2>Generate</h2>
+					</section>
+					<section>
+						<h5>Tons of span objects<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+								Span some_event("Long explanation what happened.");
+							</code></pre>
+							<aside class="notes">
+								<lo>
+									<li>String is sent to collector</li>
+									<li>We know that in 99% construction is from string literal.</li>
+								</lo>
+							</aside>
+					</section>
+
+					<section>
+						<h5>Target is something like this<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+								enum class Events {
+									...
+									kSomeEvent = 179,
+									...
+								};
+
+								std::string_view s[] = {..., "Long explanation what happened.", ... }
+
+								Span some_event(Events::kSomeEvent);
+							</code></pre>
+
+							<aside class="notes">
+								<lo>
+									<li>Maybe we want generate this enum and array during build from json.</li>
+									<li>Another good option is proto enum.</li>
+									<li>Up until now tools was declarative.</li>
+									<li>No easy way to generate new code.</li>
+								</lo>
+							</aside>
+					</section>
+					<section>
+						<h5>Let's go live again!<h5>
+						<div class="footer">
+							<a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/libclang-example" id="noteslink"> [1] Github example</a>
+						</div>
+						<aside class="notes">
+							<lo>
+								<li>Good for fast and dirty solutions.</li>
+								<li>A bit under documented.</li>
+								<li>Worse diagnostics, when something goes wrong.</li>
+								<li>Other option is to implement custom matcher callback.</li>
+							</lo>
+						</aside>
+					</section>
+
+					<section>
+						<h2> Conclusion </h2>
+
+						<div style="text-align: left">
+							<lo>
+								<li class="fragment"> Matchers, transform, libclang are powerful tools.  </li>
+								<li class="fragment"> Do not be afraid to build and run custom clang tool. </li>
+								<li class="fragment"> Try to automate next time you face boring code moving task.  </li>
+							</lo>
+						</div>
+					</section>
+
 				</section>
 			</section>
 
