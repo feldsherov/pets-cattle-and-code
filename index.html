@@ -27,27 +27,37 @@
 
 					<aside class="notes">
 						<lo>
-							<li> Senior SWE at Google, and talk is not related to Google. </li>
-							<li> For those how waiting a sign to turn on vide, this is the sign! </li>
+							<li> Senior SWE at Google, working about virtual network telemetry in GCP.</li>
+							<li> Thankfully the talk is not related to Google. </li>
+							<li> For those how waiting a sign to turn on camera, this is the sign! </li>
 						</lo>
 					</aside>
 
 				</section>
 
 				<section>
-					<img src="./images/svyat_work_timeline.svg" />
+					<h2>My path TL/DR</h2>
 
-					<lo>
-						<li> All places had tons of code and there was similar problems. </li>
-						<li> I am not in a fancy library team. </li>
-						<li> Let's take a look onto examples. </li>
-					</lo>
-			</section>
+					<div class="r-stack">
+						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_first.svg" />
+						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_second.svg" />
+						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_third.svg" />
+					</div>
+					<img src="" />
+
+					<aside class="notes">
+						<lo>
+							<li> I am not in a fancy library team. </li>
+							<li> All places had tons of code and and similar problems. </li>
+							<li> Let's take a look onto examples. </li>
+						</lo>
+					</aside>
+				</section>
 
 				<section>
 					<h2> New cpp feature arrived! How to consistently stop use old feature? </h2>
 
-					<aside class="notes">s
+					<aside class="notes">
 						<lo>
 							<li>Migration to constexpr string_view constructor.</li>
 							<li>Template from c stings and cpp20.</li>
@@ -63,13 +73,19 @@
 						<lo>
 							<li>This argument is never nullptr, let's make it reference?</li>
 							<li>I am adding sixth arg, is it time for options struct?</li>
-							<li>Both examples above are find & enforce issues.</li>
 						</lo>
-					</aside>
+						<aside class="notes">
 				</section>
 
 				<section>
-					<h2> ~1000 OTel spans constructed from strings literals let's refactor. </h2>
+					<h2> My task has tons of copy paste and small edits. </h2>
+					<aside class="notes">
+						<lo>
+							<li>Hard to formally define this sort of task.</li>
+							<li>If you want to use regexp search and replace, probably that is an example.</li>
+							<li>We dive into one real example later.</li>
+						</lo>
+						<aside class="notes">
 				</section>
 
 				<section>
@@ -229,13 +245,11 @@
 					</div>
 				</section>
 
-				<section
-					data-background-iframe="https://godbolt.org/z/8WsfzW9n8"
-					data-background-interactive>
+				<section data-background-iframe="https://godbolt.org/z/8WsfzW9n8" data-background-interactive>
 
-					<aside class="notes"> class="r-strech"
+					<aside class="notes">
 						<lo>
-						</li>Clang AST close to C++ standard, source code and machine readable.</li>
+							</li>Clang AST close to C++ standard, source code and machine readable.</li>
 						</lo>
 					</aside>
 
@@ -273,7 +287,8 @@
 					</div>
 
 					<aside class="notes">
-						<p> Clang matchers reference link. And useful links in the footers <p>
+						<p> Clang matchers reference link. And useful links in the footers
+						<p>
 					</aside>
 				</section>
 
@@ -303,23 +318,21 @@
 
 					<aside class="notes">
 						<lo>
-						<li> Next slide is GodBolt live example. </li>
-						<li> Locality of matchers. </li>
-						<li> Sometimes too declarative and hard to implement. </li>
+							<li> Locality of matchers. </li>
+							<li> Sometimes too declarative and hard to implement. </li>
 
 						</lo>
 					</aside>
 				</section>
 
-				<section
-					data-background-iframe="https://godbolt.org/z/b7jYohM57"
-					data-background-interactive>
+				<section data-background-iframe="https://godbolt.org/z/b7jYohM57" data-background-interactive>
 
 					<aside class="notes">
 
 						<lo>
 							</li>Full screen example, go to viewer tab.</li>
 							</li>Not forget about implicit nodes.</li>
+							</li>Matcher isExpansionInSystemHeader()</li>
 						</lo>
 
 					</aside>
@@ -330,8 +343,11 @@
 
 					<div class="footer">
 						<lo>
-							<li><a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/query-example">[0] Github with example code</a></li>
-							<li><a href="https://firefox-source-docs.mozilla.org/code-quality/static-analysis/writing-new/clang-query.html">[1] Firefox docs on clang-query</a></li>
+							<li><a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/query-example">[0]
+									Github with example code</a></li>
+							<li><a
+									href="https://firefox-source-docs.mozilla.org/code-quality/static-analysis/writing-new/clang-query.html">[1]
+									Firefox docs on clang-query</a></li>
 						</lo>
 					</div>
 
@@ -351,9 +367,9 @@
 
 					<div style="text-align: left">
 						<lo>
-							<li class="fragment">  Matchers are nice declarative language to query AST </li>
-							<li  class="fragment"> Use clang-query to debug matchers on your code </li>
-							<li  class="fragment"> It is possible to forbid usage of anything we can match </li>
+							<li class="fragment"> Matchers are nice declarative language to query AST </li>
+							<li class="fragment"> Use clang-query to debug matchers on your code </li>
+							<li class="fragment"> It is possible to forbid usage of anything we can match </li>
 						</lo>
 					</div>
 
@@ -434,12 +450,12 @@
 					});
 					</code></pre>
 
-					<aside class="notes">
-						<lo>
-							<li>Pay attention on rewrite. Stencil + rewrite to code, not to AST.</li>
-							<li>Hard to rewrite to something complex.</li>
-						</lo>
-					</aside>
+							<aside class="notes">
+								<lo>
+									<li>Pay attention on rewrite. Stencil + rewrite to code, not to AST.</li>
+									<li>Hard to rewrite to something complex.</li>
+								</lo>
+							</aside>
 
 				</section>
 
@@ -447,7 +463,9 @@
 					<h2> Let's make it live! </h2>
 					<div class="footer">
 						<lo>
-							<li><a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/transform-example"></a></li>
+							<li><a
+									href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/transform-example"></a>
+							</li>
 						</lo>
 					</div>
 
@@ -465,20 +483,23 @@
 
 					<div style="text-align: left">
 						<lo>
-							<li class="fragment"> Clang-transform like "search and replace" powered by ClangMatchers.  </li>
+							<li class="fragment"> Clang-transform like "search and replace" powered by ClangMatchers. </li>
 							<li class="fragment"> Clang-tidy support from the box </li>
 							<li class="fragment"> Relatively hard to build the first tool </li>
 							<li class="fragment"> Good choice to use in your pre-submit. </li>
 						</lo>
 					</div>
 				</section>
+			</section>
+
+			<section>
 
 				<section>
-					<section>
-						<h2>Generate</h2>
-					</section>
-					<section>
-						<h5>Tons of span objects<h5>
+					<h2>Generate</h2>
+				</section>
+
+				<section>
+					<h5>Tons of span objects<h5>
 							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
 								Span some_event("Long explanation what happened.");
 							</code></pre>
@@ -488,20 +509,26 @@
 									<li>We know that in 99% construction is from string literal.</li>
 								</lo>
 							</aside>
-					</section>
+				</section>
 
-					<section>
-						<h5>Target is something like this<h5>
+				<section>
+					<h5>Target is something like this<h5>
 							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+								<script type="text/template">
 								enum class Events {
 									...
 									kSomeEvent = 179,
 									...
 								};
 
-								std::string_view s[] = {..., "Long explanation what happened.", ... }
+								std::vector<std::string_view> s{
+									...,
+									"Long explanation what happened.",
+									...
+								};
 
 								Span some_event(Events::kSomeEvent);
+							</script>
 							</code></pre>
 
 							<aside class="notes">
@@ -512,35 +539,38 @@
 									<li>No easy way to generate new code.</li>
 								</lo>
 							</aside>
-					</section>
-					<section>
-						<h5>Let's go live again!<h5>
-						<div class="footer">
-							<a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/libclang-example" id="noteslink"> [1] Github example</a>
-						</div>
-						<aside class="notes">
-							<lo>
-								<li>Good for fast and dirty solutions.</li>
-								<li>A bit under documented.</li>
-								<li>Worse diagnostics, when something goes wrong.</li>
-								<li>Other option is to implement custom matcher callback.</li>
-							</lo>
-						</aside>
-					</section>
+				</section>
 
-					<section>
-						<h2> Conclusion </h2>
-
-						<div style="text-align: left">
-							<lo>
-								<li class="fragment"> Matchers, transform, libclang are powerful tools.  </li>
-								<li class="fragment"> Do not be afraid to build and run custom clang tool. </li>
-								<li class="fragment"> Try to automate next time you face boring code moving task.  </li>
-							</lo>
-						</div>
-					</section>
+				<section>
+					<h5>Let's go live again!<h5>
+							<div class="footer">
+								<a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/libclang-example"
+									id="noteslink"> [1] Github example</a>
+							</div>
+							<aside class="notes">
+								<lo>
+									<li>Good for fast and dirty solutions.</li>
+									<li>A bit under documented.</li>
+									<li>Worse diagnostics, when something goes wrong.</li>
+									<li>Other option is to implement custom matcher callback.</li>
+								</lo>
+							</aside>
 
 				</section>
+
+				<section>
+					<h2> Conclusion </h2>
+
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> Matchers, transform, libclang are powerful tools. </li>
+							<li class="fragment"> Do not be afraid to build and run custom clang tool. </li>
+							<li class="fragment"> Try to automate next time you face boring code moving task. </li>
+						</lo>
+					</div>
+				</section>
+
+			</section>
 			</section>
 
 		</div>
