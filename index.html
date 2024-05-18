@@ -23,7 +23,7 @@
 		<div class="slides">
 			<section>
 				<section>
-					<h2>Hi, I am Svyat!</h2>
+					<h2 class="r-fit-text">Hi, I am Svyat!</h2>
 
 					<aside class="notes">
 						<lo>
@@ -55,8 +55,8 @@
 				</section>
 
 				<section>
-					<h2> New cpp feature arrived! </h2>
-					<h2> How to migrate codebase? </h2>
+					<h2 class="r-fit-text"> New cpp feature arrived! </h2>
+					<h2 class="r-fit-text"> How to migrate codebase? </h2>
 
 					<aside class="notes">
 						<lo>
@@ -68,7 +68,7 @@
 				</section>
 
 				<section>
-					<h2> Modify widely used API. </h2>
+					<h2 class="r-fit-text"> Modify widely used API. </h2>
 
 					<aside class="notes">
 						<lo>
@@ -79,8 +79,8 @@
 				</section>
 
 				<section>
-					<h2> And just daily tasks.... </h2>
-					<h3> When you practice regexps over code. </h3>
+					<h2 class="r-fit-text"> And just daily tasks.... </h2>
+					<h2 class="r-fit-text"> When you practice regexps over code. </h2>
 					<aside class="notes">
 						<lo>
 							<li>Hard to formally define this sort of task.</li>
@@ -90,11 +90,11 @@
 				</section>
 
 				<section>
-					<h3> Are huge projects corporation disease? </h3>
+					<h2 class="r-fit-text"> Are huge projects corporation disease? </h2>
 				</section>
 
 				<section>
-					<h3> Wave me if your project larger 100k loc. </h3>
+					<h2 class="r-fit-text"> Wave me if your project larger 100k loc. </h2>
 				</section>
 
 				<section>
@@ -139,7 +139,7 @@
 				</section>
 
 				<section>
-					<h2> How to make life simpler? </h2>
+					<h2 class="r-fit-text"> How to make life simpler? </h2>
 				</section>
 
 				<section>
@@ -167,7 +167,7 @@
 				</section>
 
 				<section>
-					<h2>There are grep, sed and company! Isn't it enoughs?</h2>
+					<h2 class="r-fit-text">There are grep, sed and company! Isn't it enoughs?</h2>
 				</section>
 
 				<section>
@@ -232,14 +232,15 @@
 
 
 				<section>
+					<h2 class="r-fit-text">Let's try something like this...</h2>
 					<pre><code class="language-bash" data-trim data-noescape>
 						grep -rHn --include "*.cc" --include "*.h" -E 'wait\([^,]+\)'
 					</code></pre>
 				</section>
 
 				<section>
-					<h5>You will find forgotten library<h5>
-							<pre><code class="language-cpp" data-trim data-noescape >
+					<h3>You will find forgotten library</h3>
+					<pre><code class="language-cpp" data-trim data-noescape >
 						void wait(int sec) {
 							...
 						}
@@ -247,18 +248,18 @@
 				</section>
 
 				<section>
-					<h5>And the code of intern from 3 years ago<h5>
-							<pre><code class="language-cpp" data-trim data-noescape >
+					<h3>... and code of intern from 3 years ago </h3>
+					<pre><code class="language-cpp" data-trim data-noescape >
 						int behind_horizons() {
 							...
-							std::cout << "really useful debug about wait(delay)" << std::endl;
+							std::cout << "useful debug about wait(delay)" << std::endl;
 						}
 					</code></pre>
 				</section>
 
 				<section>
-					<h5>And formatting will shoot you in the leg<h5>
-							<pre><code class="language-cpp" data-trim data-noescape >
+					<h3>... and formatting will shoot you in the leg</h3>
+					<pre><code class="language-cpp" data-trim data-noescape >
 							long_condvar_name.wait(
 								long_mutex_name
 							);
@@ -267,8 +268,14 @@
 
 
 				<section>
-					<h2>And depression come<h2>
-							<img src="./images/depression.webp" />
+					<h2>And depression will come</h2>
+					<img src="./images/depression.webp" />
+
+					<aside class="notes">
+						<lo>
+							</li>Discuss what went wrong and why.</li>
+						</lo>
+					</aside>
 				</section>
 
 				<section>
@@ -418,7 +425,7 @@
 						<lo>
 							<li class="fragment"> Matchers are nice declarative language to query AST </li>
 							<li class="fragment"> Use clang-query to debug matchers on your code </li>
-							<li class="fragment"> Matchers are enough for enforcing conventions </li>
+							<li class="fragment"> Matchers are mostly enough for enforcing conventions </li>
 						</lo>
 					</div>
 
@@ -623,10 +630,9 @@
 				</section>
 
 				<section>
-					<pre><code class="language-py" data-trim data-noescape data-line-numbers>
+					<pre><code class="language-py" data-trim data-noescape data-line-numbers="|1|2-5|6-8|10-11">
 						def find_all_spans(cursor: Cursor, result: list):
 							if cursor.kind == CursorKind.VAR_DECL:
-
 								type_decl = cursor.type.get_declaration()
 								if type_decl.displayname != "Span":
 										return
@@ -673,13 +679,14 @@
 			</section>
 
 			<section>
-				<section data-auto-animate>
-					<h2>Whole talk in one slide</h2>
+				<section id="fit-text">
+					<h2> Talk message in one slide</h2>
 					<div style="text-align: left">
 						<lo>
 							<li class="fragment"> Projects became huge </li>
-							<li class="fragment"> There are mechanical task </li>
-							<li class="fragment"> Clang tooling allows to delegate them to machine </li>
+							<li class="fragment"> There are mechanical task with code </li>
+							<li class="fragment"> These tasks far beyond formatting and linting </li>
+							<li class="fragment"> Clang tooling allows to delegate them to machines </li>
 							<li class="fragment"> Use this opportunity </li>
 						</lo>
 					</div>
