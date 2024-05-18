@@ -55,19 +55,20 @@
 				</section>
 
 				<section>
-					<h2> New cpp feature arrived! How to consistently stop use old feature? </h2>
+					<h2> New cpp feature arrived! </h2>
+					<h2> How to migrate codebase? </h2>
 
 					<aside class="notes">
 						<lo>
 							<li>Migration to constexpr string_view constructor.</li>
-							<li>Template from c stings and cpp20.</li>
-							<li>There are cases, when code do not compile with new standard. But this is for fancy teams. </li>
+							<li>Do not use std::enable_if.</li>
+							<li>There are cases, when code do not compile with new standard. </li>
 						</lo>
 					</aside>
 				</section>
 
 				<section>
-					<h2> How to improve API used all over the code? </h2>
+					<h2> Modify widely used API. </h2>
 
 					<aside class="notes">
 						<lo>
@@ -78,22 +79,26 @@
 				</section>
 
 				<section>
-					<h2> My task has tons of copy paste and small edits. </h2>
+					<h2> And just daily tasks.... </h2>
+					<h3> When you practice regexps over code. </h3>
 					<aside class="notes">
 						<lo>
 							<li>Hard to formally define this sort of task.</li>
-							<li>If you want to use regexp search and replace, probably that is an example.</li>
 							<li>We dive into one real example later.</li>
 						</lo>
 						<aside class="notes">
 				</section>
 
 				<section>
-					<h2> Maybe huge code-bases are corporation disease? </h2>
+					<h3> Are huge projects corporation disease? </h3>
 				</section>
 
 				<section>
-					<h2>Linux kernel lines of code</h2>
+					<h3> Wave me if your project larger 100k loc. </h3>
+				</section>
+
+				<section>
+					<h2>Linux kernel loc </h2>
 					<pre><code data-trim data-noescape>
 					~/linux$ cloc .
 					139223 text files.
@@ -112,7 +117,7 @@
 				</section>
 
 				<section>
-					<h2>NodeJS lines of code</h2>
+					<h2>NodeJS loc</h2>
 					<pre><code data-trim data-noescape>
 						~/node$ cloc .
 						42602 text files.
@@ -139,14 +144,18 @@
 
 				<section>
 					<h2>Let's treat code as cattle!</h2>
-					<img src="./images/cattle.webp" />
+					<img class="r-stretch" src="./images/cattle.webp" />
 				</section>
 
 				<section>
-					<h2> Find </h2>
-					<h2> Fix and enforce </h2>
-					<h2> Generate </h2>
-
+					<h2> Automate what?</h2>
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> Find </li>
+							<li class="fragment"> Fix and enforce </li>
+							<li class="fragment"> Generate </li>
+						</lo>
+					</div>
 				</section>
 
 			</section>
@@ -154,7 +163,7 @@
 			<section>
 				<section>
 					<h2>Theory!</h2>
-					<img src="./images/theory.webp" />
+					<img class="r-stretch" src="./images/theory.webp" />
 				</section>
 
 				<section>
@@ -202,34 +211,64 @@
 				</section>
 
 				<section>
+					<h5>std::condition_variable::wait<h5>
+
+							<pre><code class="language-cpp" data-trim data-noescape>
+						class Worker {
+
+							void work() {
+								std::unique_lock lock{mt_};
+								while (condition) {
+									cv_.wait(lock);
+								}
+								...
+							}
+
+							std::mutex mt_;
+							std::condition_variable cv_;
+						};
+						</code></pre>
+				</section>
+
+
+				<section>
 					<pre><code class="language-bash" data-trim data-noescape>
-						grep -rHn --include "*.cc" --include "*.h" 'wait()'
+						grep -rHn --include "*.cc" --include "*.h" -E 'wait\([^,]+\)'
 					</code></pre>
 				</section>
 
 				<section>
-					<h5>Somewhere in forgotten library<h5>
+					<h5>You will find forgotten library<h5>
 							<pre><code class="language-cpp" data-trim data-noescape >
-						void wait() {
+						void wait(int sec) {
 							...
 						}
 						</code></pre>
 				</section>
 
 				<section>
-					<h5>Or in the code of intern from 3 years ago<h5>
+					<h5>And the code of intern from 3 years ago<h5>
 							<pre><code class="language-cpp" data-trim data-noescape >
 						int behind_horizons() {
 							...
-							std::cout << "really useful debug about wait()" << std::endl;
+							std::cout << "really useful debug about wait(delay)" << std::endl;
 						}
 					</code></pre>
 				</section>
 
 				<section>
-					<h2>And fell to depression<h2>
-							<img src="./images/depression.webp" />
+					<h5>And formatting will shoot you in the leg<h5>
+							<pre><code class="language-cpp" data-trim data-noescape >
+							long_condvar_name.wait(
+								long_mutex_name
+							);
+					</code></pre>
+				</section>
 
+
+				<section>
+					<h2>And depression come<h2>
+							<img src="./images/depression.webp" />
 				</section>
 
 				<section>
@@ -252,19 +291,28 @@
 							</li>Clang AST close to C++ standard, source code and machine readable.</li>
 						</lo>
 					</aside>
-
-
 				</section>
 
 				<section>
-					<h2>Let's try to use it!</h2>
+					<h2>Ok, but how to build tools with it?</h2>
+					<aside class="notes">
+						<lo>
+							</li>clang libtooling</li>
+							</li>clang matchers</li>
+							</li>clang transform</li>
+							</li>python bindings and custom tools</li>
+							</li>clang tools extra</li>
+							</li>Gcc tool chain is a pain, you will need to parse your code with clang.</li>
+						</lo>
+					</aside>
 				</section>
+
 			</section>
 
 			<section>
 				<section>
 					<h2>Find</h2>
-					<img src="./images/find.webp" />
+					<img class="r-stretch" src="./images/find2.webp" />
 				</section>
 
 				<section>
@@ -283,7 +331,7 @@
 					</code></pre>
 
 					<div class="footer">
-						<a href="https://clang.llvm.org/docs/LibASTMatchersReference.html" id="noteslink"> [1] Matchers referece</a>
+						<a href="https://clang.llvm.org/docs/LibASTMatchersReference.html" id="noteslink"> [0] Matchers referece</a>
 					</div>
 
 					<aside class="notes">
@@ -298,7 +346,7 @@
 							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
 						try {
 							do_something();
-						} except {
+						} catch (...) {
 							eat_exception_and_smile();
 						}
 						</code></pre>
@@ -325,26 +373,26 @@
 					</aside>
 				</section>
 
-				<section data-background-iframe="https://godbolt.org/z/b7jYohM57" data-background-interactive>
+				<section data-background-iframe="https://godbolt.org/z/sndGE1hWG" data-background-interactive>
 
 					<aside class="notes">
 
 						<lo>
 							</li>Full screen example, go to viewer tab.</li>
 							</li>Not forget about implicit nodes.</li>
-							</li>Matcher isExpansionInSystemHeader()</li>
+							</li>Matcher unless(isExpansionInSystemHeader())s</li>
 						</lo>
 
 					</aside>
 				</section>
 
 				<section>
-					<h2> How about from the terminal example? </h2>
+					<h2> Clang tidy from the terminal example? </h2>
 
 					<div class="footer">
 						<lo>
 							<li><a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/query-example">[0]
-									Github with example code</a></li>
+									Github with examples</a></li>
 							<li><a
 									href="https://firefox-source-docs.mozilla.org/code-quality/static-analysis/writing-new/clang-query.html">[1]
 									Firefox docs on clang-query</a></li>
@@ -353,6 +401,7 @@
 
 					<aside class="notes">
 						<lo>
+							<li>m functionDecl(hasName("AwesomeFunc")).</li>
 							<li>As complex as parsing the code. Complexity guesstimate is 1/3 of compilation.</li>
 							<li>Clang query usually used as part of matchers development, not on it's own.</li>
 							<li>There is an option to pass matcher from command line, so it is already some compliance tool.</li>
@@ -369,7 +418,7 @@
 						<lo>
 							<li class="fragment"> Matchers are nice declarative language to query AST </li>
 							<li class="fragment"> Use clang-query to debug matchers on your code </li>
-							<li class="fragment"> It is possible to forbid usage of anything we can match </li>
+							<li class="fragment"> Matchers are enough for enforcing conventions </li>
 						</lo>
 					</div>
 
@@ -386,7 +435,11 @@
 			<section>
 				<section>
 					<h2>Fix and enforce</h2>
-					<img src="./images/fix.webp" />
+					<img class="r-stretch" src="./images/fix.webp" />
+				</section>
+
+				<section>
+					<h2 class="r-fit-text">clang-transform</h2>
 				</section>
 
 				<section>
@@ -404,7 +457,7 @@
 
 				<section>
 					<h5>Matcher<h5>
-							<pre><code class="language-isbl" data-trim data-noescape data-line-numbers>
+							<pre><code class="language-isbl" data-trim data-noescape data-line-numbers="|1-4|7-9|10">
 						m callExpr(
 								callee(
 									functionDecl(
@@ -422,17 +475,25 @@
 
 				<section>
 					<h5>Transformation<h5>
-							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|2|3">
 								changeTo(
 									node("argument"),
 									transformer::maybeDeref("argument")
 								)
 					</code></pre>
+							<div class="footer">
+								<lo>
+									<li><a href="https://intel.github.io/llvm-docs/clang/ClangTransformerTutorial.html">[0]
+											Clang transform tutorial</a></li>
+
+								</lo>
+							</div>
 				</section>
 
 				<section>
 					<h5>Interesting part of code<h5>
-							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2-6|8-14">
+								<script type="text/template">
 					const std::string ArgId = "arg";
 					auto Rule = makeRule(
 							callExpr(callee(functionDecl(hasName("AwesomeFunc"))),
@@ -442,12 +503,12 @@
 
 					Transformer TransformerInstance(
 						Rule,
-						[&AllChanges](Expected<llvm::MutableArrayRef<AtomicChange>> Changes) {
-							AllChanges.insert(
-								AllChanges.end(),
-								std::make_move_iterator(Changes->begin()),
-								std::make_move_iterator(Changes->end()));
+						[&AllChanges](
+								Expected<llvm::MutableArrayRef<AtomicChange>> Changes
+							) {
+							...
 					});
+				</script>
 					</code></pre>
 
 							<aside class="notes">
@@ -479,14 +540,19 @@
 				</section>
 
 				<section>
+					<h2> Wait, but... How to enforce? </h2>
+				</section>
+
+				<section>
 					<h2> Conclusion </h2>
 
 					<div style="text-align: left">
 						<lo>
-							<li class="fragment"> Clang-transform like "search and replace" powered by ClangMatchers. </li>
-							<li class="fragment"> Clang-tidy support from the box </li>
-							<li class="fragment"> Relatively hard to build the first tool </li>
-							<li class="fragment"> Good choice to use in your pre-submit. </li>
+							<li class="fragment"> clang-transform is like "search and replace" powered by clang matchers. </li>
+							<li class="fragment"> clang-tidy support out of the box </li>
+							<li class="fragment"> relatively hard to build your first tool </li>
+							<li class="fragment"> no way to upstream really custom tool </li>
+							<li class="fragment"> check existing tools before writing new :) </li>
 						</lo>
 					</div>
 				</section>
@@ -496,6 +562,7 @@
 
 				<section>
 					<h2>Generate</h2>
+					<img class="r-stretch" src="./images/generate.webp" />
 				</section>
 
 				<section>
@@ -505,7 +572,7 @@
 							</code></pre>
 							<aside class="notes">
 								<lo>
-									<li>String is sent to collector</li>
+									<li>We want sent strings off host</li>
 									<li>We know that in 99% construction is from string literal.</li>
 								</lo>
 							</aside>
@@ -542,20 +609,52 @@
 				</section>
 
 				<section>
-					<h5>Let's go live again!<h5>
-							<div class="footer">
-								<a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/libclang-example"
-									id="noteslink"> [1] Github example</a>
-							</div>
-							<aside class="notes">
-								<lo>
-									<li>Good for fast and dirty solutions.</li>
-									<li>A bit under documented.</li>
-									<li>Worse diagnostics, when something goes wrong.</li>
-									<li>Other option is to implement custom matcher callback.</li>
-								</lo>
-							</aside>
+					<h2 class="r-fit-text">Python libclang</h2>
+					<div class="footer">
+						<a href="https://pypi.org/project/libclang/" id="noteslink"> [0] libclang PyPi</a>
+					</div>
 
+					<aside class="notes">
+						<lo>
+							<li>Other option is to implement custom matcher callback.</li>
+						</lo>
+					</aside>
+
+				</section>
+
+				<section>
+					<pre><code class="language-py" data-trim data-noescape data-line-numbers>
+						def find_all_spans(cursor: Cursor, result: list):
+							if cursor.kind == CursorKind.VAR_DECL:
+
+								type_decl = cursor.type.get_declaration()
+								if type_decl.displayname != "Span":
+										return
+								result.append(
+										(cursor.displayname, find_string_literal(cursor))
+									)
+
+							for c in cursor.get_children():
+									find_all_spans(c, result)
+					</code></pre>
+
+					<div class="footer">
+						<a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/libclang-example"
+							id="noteslink"> [0] Github example</a>
+					</div>
+
+					<aside class="notes">
+						<lo>
+							<li>Good for fast and dirty solutions.</li>
+							<li>A bit under documented.</li>
+							<li>Worse diagnostics, when something goes wrong.</li>
+							<li>Other option is to implement custom matcher callback.</li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<h5>Let's go live again!<h5>
 				</section>
 
 				<section>
@@ -563,14 +662,41 @@
 
 					<div style="text-align: left">
 						<lo>
-							<li class="fragment"> Matchers, transform, libclang are powerful tools. </li>
-							<li class="fragment"> Do not be afraid to build and run custom clang tool. </li>
-							<li class="fragment"> Try to automate next time you face boring code moving task. </li>
+							<li class="fragment"> libclang is awesome for fast hacking </li>
+							<li class="fragment"> if you need more, then custom tool is your choice </li>
 						</lo>
 					</div>
 				</section>
 
 			</section>
+
+			</section>
+
+			<section>
+				<section data-auto-animate>
+					<h2>Whole talk in one slide</h2>
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> Projects became huge </li>
+							<li class="fragment"> There are mechanical task </li>
+							<li class="fragment"> Clang tooling allows to delegate them to machine </li>
+							<li class="fragment"> Use this opportunity </li>
+						</lo>
+					</div>
+				</section>
+
+				<section data-auto-animate>
+					<h2 class="r-fit-text">QUESTIONS?</h2>
+					<div class="footer">
+						<lo>
+							<li><a href="https://t.me/feldsherov" id="noteslink"> [0] Tg: @feldsherov</a></li>
+							<li><a href="https://link.in/svyat" id="noteslink"> [1] Link: svyat</a></li>
+							<li><a href="mailto:svyat@feldsherov.name" id="noteslink"> [2] Mail: svyat@feldsherov.name</a></li>
+						</lo>
+					</div>
+				</section>
+			</section>
+
 			</section>
 
 		</div>
