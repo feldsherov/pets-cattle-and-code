@@ -97,7 +97,7 @@
 					<h2 class="r-fit-text"> Wave me if your project larger 100k loc </h2>
 				</section>
 
-				<section>
+				<!--<section>
 					<h2>Linux kernel loc </h2>
 					<pre><code data-trim data-noescape>
 					~/linux$ cloc .
@@ -136,7 +136,7 @@
 
 				</code></pre>
 
-				</section>
+				</section> -->
 
 				<section>
 					<h2 class="r-fit-text"> How to make life simpler? </h2>
@@ -239,7 +239,7 @@
 				</section>
 
 				<section>
-					<h3>You will find forgotten library</h3>
+					<h3>You will find function in C-library</h3>
 					<pre><code class="language-cpp" data-trim data-noescape >
 						void wait(int sec) {
 							...
@@ -248,9 +248,9 @@
 				</section>
 
 				<section>
-					<h3>... and code of intern from 3 years ago </h3>
+					<h3>... and some debug output </h3>
 					<pre><code class="language-cpp" data-trim data-noescape >
-						int behind_horizons() {
+						int far_far_away() {
 							...
 							std::cout << "useful debug about wait(delay)" << std::endl;
 						}
@@ -258,7 +258,7 @@
 				</section>
 
 				<section>
-					<h3>... and formatting will shoot you in the leg</h3>
+					<h3>... and formatting will make life hard</h3>
 					<pre><code class="language-cpp" data-trim data-noescape >
 							long_condvar_name.wait(
 								long_mutex_name
@@ -302,14 +302,20 @@
 
 				<section>
 					<h2>Ok, but how to build tools with it?</h2>
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> clang libtooling </li>
+							<li class="fragment"> clang matchers </li>
+							<li class="fragment"> clang transform </li>
+							<li class="fragment"> python bindings and custom tools</li>
+							<li class="fragment">clang tools extra</li>
+
+						</lo>
+					</div>
 					<aside class="notes">
 						<lo>
-							</li>clang libtooling</li>
-							</li>clang matchers</li>
-							</li>clang transform</li>
-							</li>python bindings and custom tools</li>
-							</li>clang tools extra</li>
-							</li>Gcc tool chain is a pain, you will need to parse your code with clang.</li>
+							<li> clang tools extra - rename/change namespace </li>
+							<li> Gcc tool chain is a pain, you will need to parse your code with clang.</li>
 						</lo>
 					</aside>
 				</section>
@@ -423,9 +429,9 @@
 
 					<div style="text-align: left">
 						<lo>
-							<li class="fragment"> Matchers are nice declarative language to query AST </li>
+							<li class="fragment"> Matchers is a declarative language to query AST </li>
 							<li class="fragment"> Use clang-query to debug matchers on your code </li>
-							<li class="fragment"> Matchers are mostly enough for enforcing conventions </li>
+							<li class="fragment"> Matchers are almost enough for enforcing </li>
 						</lo>
 					</div>
 
