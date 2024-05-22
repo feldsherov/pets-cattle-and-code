@@ -79,7 +79,7 @@
 				</section>
 
 				<section>
-					<h2 class="r-fit-text"> And just daily tasks.... </h2>
+					<h2 class="r-fit-text"> And just tasks.... </h2>
 					<h2 class="r-fit-text"> When you practice regexps over code </h2>
 					<aside class="notes">
 						<lo>
@@ -178,7 +178,7 @@
 
 							void work() {
 								std::unique_lock lock{mt_};
-								if (condition) {
+								if (!ready) {
 									cv_.wait(lock);
 								}
 								...
@@ -198,7 +198,7 @@
 
 							void work() {
 								std::unique_lock lock{mt_};
-								if (condition) { // <- spurious wake up issue
+								if (!ready) { // <- spurious wake up issue
 									cv_.wait(lock);
 								}
 								...
@@ -218,9 +218,9 @@
 
 							void work() {
 								std::unique_lock lock{mt_};
-								while (condition) {
-									cv_.wait(lock);
-								}
+								cv_.wait(lock, [...](){
+									return ready;
+								});
 								...
 							}
 
