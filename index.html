@@ -178,13 +178,14 @@
 
 							void work() {
 								std::unique_lock lock{mt_};
-								if (!ready) {
+								if (!ready_) {
 									cv_.wait(lock);
 								}
 								...
 							}
 
 							std::mutex mt_;
+							bool ready_;
 							std::condition_variable cv_;
 						};
 						</code></pre>
@@ -198,13 +199,14 @@
 
 							void work() {
 								std::unique_lock lock{mt_};
-								if (!ready) { // <- spurious wake up issue
+								if (!ready_) { // <- spurious wake up issue
 									cv_.wait(lock);
 								}
 								...
 							}
 
 							std::mutex mt_;
+							bool ready_;
 							std::condition_variable cv_;
 						};
 						</code></pre>
@@ -218,13 +220,14 @@
 
 							void work() {
 								std::unique_lock lock{mt_};
-								cv_.wait(lock, [...](){
-									return ready;
+								cv_.wait(lock, [this](){
+									return ready_;
 								});
 								...
 							}
 
 							std::mutex mt_;
+							bool ready_;
 							std::condition_variable cv_;
 						};
 						</code></pre>
