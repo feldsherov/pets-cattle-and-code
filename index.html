@@ -90,53 +90,12 @@
 				</section>
 
 				<section>
-					<h2 class="r-fit-text"> Are huge projects corporation disease? </h2>
+					<h2 class="r-fit-text"> Are huge projects only a corporations disease? </h2>
 				</section>
 
 				<section>
 					<h2 class="r-fit-text"> Wave me if your project larger 100k loc </h2>
 				</section>
-
-				<!--<section>
-					<h2>Linux kernel loc </h2>
-					<pre><code data-trim data-noescape>
-					~/linux$ cloc .
-					139223 text files.
-					138000 unique files.
-					55315 files ignored.
-
-					github.com/AlDanial/cloc  T=107.20 s
-					-----------------------------------------------
-					Language      files    blank  comment      code
-					-----------------------------------------------
-					C             38638  3342054  2581107  17414033
-					C/cpp Header  23565   705113  1339694   6954666
-					Assembly       1337    48551   102434   1862752
-				</code></pre>
-
-				</section>
-
-				<section>
-					<h2>NodeJS loc</h2>
-					<pre><code data-trim data-noescape>
-						~/node$ cloc .
-						42602 text files.
-						38366 unique files.
-						9832 files ignored.
-
-						github.com/AlDanial/cloc  T=28.45s
-						---------------------------------------------
-						Language      files   blank  comment     code
-						---------------------------------------------
-						cpp            3094  254539   240197  2023156
-						Perl            619   32748    28272  1784382
-						JavaScript    19270  218078   288933  1763057
-						C/cpp Header   3987  155374   338166   751333
-						C              2104  106491    93472   650332
-
-				</code></pre>
-
-				</section> -->
 
 				<section>
 					<h2 class="r-fit-text"> How to make life simpler? </h2>
@@ -282,6 +241,21 @@
 				</section>
 
 				<section>
+					<h3> We are missing structure!</h3>
+					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|3|1|4">
+							std::condition_variable condvar_name;
+
+							condvar_name.wait(
+								long_mutex_name
+							);
+					</code></pre>
+				</section>
+
+				<section>
+					<h3 class="r-fit-text"> Ok, but where to find this structure?</h3>
+				</section>
+
+				<section>
 					<h2>Compilation process</h2>
 					<div class="r-stack">
 						<img class="fragment fade-in-then-out" src="./images/compilation_process_first.svg" />
@@ -310,9 +284,7 @@
 							<li class="fragment"> clang libtooling </li>
 							<li class="fragment"> clang matchers </li>
 							<li class="fragment"> clang transform </li>
-							<li class="fragment"> python bindings and custom tools</li>
-							<li class="fragment">clang tools extra</li>
-
+							<li class="fragment"> python bindings </li>
 						</lo>
 					</div>
 					<aside class="notes">
@@ -333,7 +305,7 @@
 
 				<section>
 					<h2>Matcher for wait problem</h2>
-					<pre><code class="language-isbl+" data-trim data-noescape data-line-numbers="1|2|3|4|5|6|9">
+					<pre><code class="language-isbl+" data-trim data-noescape data-line-numbers="|1|2|3|4|5|6|9">
 						m callExpr(
 							callee(
 								cxxMethodDecl(
@@ -351,14 +323,13 @@
 					</div>
 
 					<aside class="notes">
-						<p> Clang matchers reference link. And useful links in the footers
-						<p>
+						<p> Clang matchers reference link. And useful links in the footers </p>
 					</aside>
 				</section>
 
 
 				<section>
-					<h5>Lost exceptions<h5>
+					<h2>Lost exceptions</h2>
 							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
 						try {
 							do_something();
@@ -366,10 +337,16 @@
 							eat_exception_and_smile();
 						}
 						</code></pre>
-				</section>
+
+						<aside class="notes">
+							<li> We want to allow it only in specific files e.g. </li>
+						</aside>
+					</section>
 
 
 				<section>
+					<h2>And the matcher...</h2>
+
 					<pre><code language="language-isbl" data-trim data-noescape data-line-numbers="1|2|3|4">
 						m cxxCatchStmt(
 							unless(
@@ -384,7 +361,6 @@
 						<lo>
 							<li> Locality of matchers. </li>
 							<li> Sometimes too declarative and hard to implement. </li>
-
 						</lo>
 					</aside>
 				</section>
@@ -403,7 +379,7 @@
 				</section>
 
 				<section>
-					<h2> clang-query from the terminal example? </h2>
+					<h2> clang-query from the terminal example </h2>
 
 					<div class="footer">
 						<lo>
@@ -506,11 +482,22 @@
 							</div>
 				</section>
 
+			<section>
+				<h5>More transformations<h5>
+				<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2|3|4">
+					insertBefore(node("id"), cat("some text"))
+					addInclude(node("id"), "myaweomelib.h")
+					changeTo(node("argument"), cat("new_name"));
+					changeTo(node("id"), access(node("id"), "myFieldName"))
+				</code></pre>
+
+			</section>
+
 				<section>
-					<h5>Interesting part of code<h5>
+					<h5>Interesting part of tool with clang-transform<h5>
 							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2-6|8-14">
 								<script type="text/template">
-					const std::string ArgId = "arg";
+					const std::string ArgId = "argument";
 					auto Rule = makeRule(
 							callExpr(callee(functionDecl(hasName("AwesomeFunc"))),
 												hasArgument(0,
@@ -541,7 +528,7 @@
 					<div class="footer">
 						<lo>
 							<li><a
-									href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/transform-example"></a>
+									href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/transform-example">[0] Github with example</a>
 							</li>
 						</lo>
 					</div>
@@ -549,26 +536,37 @@
 					<aside class="notes">
 						<lo>
 							<li>Link to Github with example.</li>
-							<li>We patched llvm clang-extra-tools and added new tool.</li>
+							<li>We patched llvm clang tools extra and added new tool.</li>
 							<li>No way for upstream. If you use your build of clang, should be easy to support custom tool </li>
 						</lo>
 					</aside>
 				</section>
 
 				<section>
-					<h2> Wait, but... How to enforce? </h2>
+					<h2 class="r-fit-text"> Wait, but... How to enforce? </h2>
 				</section>
+
+				<section>
+					<h2 class="r-fit-text"> Clang tidy! </h2>
+					<div class="footer">
+						<lo>
+							<li><a
+									href="https://github.com/llvm/llvm-project/blob/main/clang-tools-extra/clang-tidy/abseil/CleanupCtadCheck.cpp#L40">[0] absl check example with clang tidy </a>
+							</li>
+						</lo>
+				</section>
+
 
 				<section>
 					<h2> Conclusion </h2>
 
 					<div style="text-align: left">
 						<lo>
-							<li class="fragment"> clang-transform is like "search and replace" powered by clang matchers. </li>
+							<li class="fragment"> clang-transform is like "search and replace" powered by clang matchers </li>
 							<li class="fragment"> clang-tidy support out of the box </li>
 							<li class="fragment"> relatively hard to build your first tool </li>
-							<li class="fragment"> no way to upstream really custom tool </li>
-							<li class="fragment"> check existing tools before writing new :) </li>
+							<li class="fragment"> no way to upstream a really custom tool </li>
+							<li class="fragment"> check clang-tools-extra before writing new :) </li>
 						</lo>
 					</div>
 				</section>
@@ -645,9 +643,10 @@
 								type_decl = cursor.type.get_declaration()
 								if type_decl.displayname != "Span":
 										return
-								result.append(
-										(cursor.displayname, find_string_literal(cursor))
-									)
+
+								var_name = cursor.displayname
+								message = find_string_literal(cursor)
+								result.append((var_name, message))
 
 							for c in cursor.get_children():
 									find_all_spans(c, result)
@@ -693,7 +692,7 @@
 					<div style="text-align: left">
 						<lo>
 							<li class="fragment"> Projects became huge </li>
-							<li class="fragment"> There are repetitive task with code </li>
+							<li class="fragment"> There are repetitive tasks with code </li>
 							<li class="fragment"> These tasks are far beyond formatting and linting </li>
 							<li class="fragment"> Clang tooling allows to delegate them to machines </li>
 							<li class="fragment"> Use this opportunity </li>
