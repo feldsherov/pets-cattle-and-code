@@ -639,17 +639,17 @@
 				<section>
 					<pre><code class="language-py" data-trim data-noescape data-line-numbers="|1|2-5|6-8|10-11">
 						def find_all_spans(cursor: Cursor, result: list):
-							if cursor.kind == CursorKind.VAR_DECL:
-								type_decl = cursor.type.get_declaration()
-								if type_decl.displayname != "Span":
-										return
+								if cursor.kind == CursorKind.VAR_DECL:
+										type_decl = cursor.type.get_declaration()
+										if type_decl.displayname != "Span":
+												return
 
-								var_name = cursor.displayname
-								message = find_string_literal(cursor)
-								result.append((var_name, message))
+										var_name = cursor.displayname
+										message = find_string_literal(cursor)
+										result.append((var_name, message))
 
-							for c in cursor.get_children():
-									find_all_spans(c, result)
+								for c in cursor.get_children():
+										find_all_spans(c, result)
 					</code></pre>
 
 					<div class="footer">
