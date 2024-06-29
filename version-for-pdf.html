@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Pets, cattle and automatic operations with code</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/simple.css">
+	<link rel="stylesheet" href="presentation/css/terminal.css">
+	<link rel="stylesheet" href="custom.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	<script src="plugin/highlight/highlight.js"></script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<section>
+					<h2 class="r-fit-text">Hi, I am Svyat!</h2>
+				</section>
+
+				<section>
+					<h2>My story TL/DR</h2>
+					<div class="r-stack">
+						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_first.svg" />
+						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_second.svg" />
+						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_third.svg" />
+					</div>
+
+					<aside class="notes">
+						<lo>
+							<li> I am not in a fancy library team. </li>
+							<li> All places had tons of code and and similar problems. </li>
+							<li> Let's take a look onto examples. </li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> New cpp feature arrived! </h2>
+					<h2 class="r-fit-text"> How to migrate codebase? </h2>
+
+					<aside class="notes">
+						<lo>
+							<li>Migration to constexpr string_view constructor.</li>
+							<li>Do not use std::enable_if.</li>
+							<li>There are cases, when code do not compile with new standard. </li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> Modify widely used API </h2>
+
+					<aside class="notes">
+						<lo>
+							<li>This argument is never nullptr, let's make it reference?</li>
+							<li>I am adding sixth arg, is it time for options struct?</li>
+						</lo>
+						<aside class="notes">
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> And just tasks.... </h2>
+					<h2 class="r-fit-text"> When you practice regexps over code </h2>
+					<aside class="notes">
+						<lo>
+							<li>Hard to formally define this sort of task.</li>
+							<li>We dive into one real example later.</li>
+						</lo>
+						<aside class="notes">
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> Are huge projects only a corporations disease? </h2>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> Wave me if your project larger 100k loc </h2>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> How to make life simpler? </h2>
+				</section>
+
+				<section>
+					<h2>Let's treat code as cattle!</h2>
+					<img class="r-stretch" src="./images/cattle.webp" />
+				</section>
+
+				<section>
+					<h2> Automate what?</h2>
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> Find </li>
+							<li class="fragment"> Fix and enforce </li>
+							<li class="fragment"> Generate </li>
+						</lo>
+					</div>
+				</section>
+
+				<section>
+					<h2> Generate </h2>
+					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						enum class Color {
+							GREEN = 0;
+							YELLOW = 1;
+							RED   = 2;
+						};
+					</code></pre>
+				</section>
+
+
+			</section>
+
+			<section>
+				<section>
+					<h2>Theory!</h2>
+					<img class="r-stretch" src="./images/theory.webp" />
+				</section>
+
+				<section>
+					<h2 class="r-fit-text">There are grep, sed and company! Isn't it enough?</h2>
+				</section>
+
+				<section>
+					<h5>std::condition_variable::wait<h5>
+
+						<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						class Worker {
+
+							void work() {
+								std::unique_lock lock{mt_};
+								if (!ready_) {
+									cv_.wait(lock);
+								}
+								...
+							}
+
+							std::mutex mt_;
+							bool ready_;
+							std::condition_variable cv_;
+						};
+						</code></pre>
+				</section>
+
+				<section>
+					<h5>std::condition_variable::wait<h5>
+
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="5">
+						class Worker {
+
+							void work() {
+								std::unique_lock lock{mt_};
+								if (!ready_) { // <- spurious wake up issue
+									cv_.wait(lock);
+								}
+								...
+							}
+
+							std::mutex mt_;
+							bool ready_;
+							std::condition_variable cv_;
+						};
+						</code></pre>
+				</section>
+
+				<section>
+					<h5>std::condition_variable::wait<h5>
+
+							<pre><code class="language-cpp" data-trim data-noescape>
+						class Worker {
+
+							void work() {
+								std::unique_lock lock{mt_};
+								cv_.wait(lock, [this](){
+									return ready_;
+								});
+								...
+							}
+
+							std::mutex mt_;
+							bool ready_;
+							std::condition_variable cv_;
+						};
+						</code></pre>
+				</section>
+
+
+				<section>
+					<h2 class="r-fit-text">Let's try something like this...</h2>
+					<pre><code class="language-bash" data-trim data-noescape>
+						grep -rHn --include "*.cc" --include "*.h" -E 'wait\([^,]+\)'
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>You will find function in C-library</h3>
+					<pre><code class="language-cpp" data-trim data-noescape >
+						void wait(int sec) {
+							...
+						}
+						</code></pre>
+				</section>
+
+				<section>
+					<h3>... and some debug output </h3>
+					<pre><code class="language-cpp" data-trim data-noescape >
+						int far_far_away() {
+							...
+							std::cout << "useful debug about wait(delay)" << std::endl;
+						}
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>... and formatting will make life hard</h3>
+					<pre><code class="language-cpp" data-trim data-noescape >
+							long_condvar_name.wait(
+								long_mutex_name
+							);
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h2>And depression will come</h2>
+					<img class="r-stretch" src="./images/depression.webp" />
+
+					<aside class="notes">
+						<lo>
+							</li>Discuss what went wrong and why.</li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<h3> We are missing structure!</h3>
+					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|3|1|4">
+							std::condition_variable condvar_name;
+
+							condvar_name.wait(
+								long_mutex_name
+							);
+					</code></pre>
+				</section>
+
+				<section>
+					<h3 class="r-fit-text"> Ok, but where to find this structure?</h3>
+				</section>
+
+				<section>
+					<h2>Compilation process</h2>
+					<div class="r-stack">
+						<img class="fragment" src="./images/compilation_process_first.svg" />
+						<img class="fragment" src="./images/compilation_process_second.svg" />
+						<img class="fragment" src="./images/compilation_process_third.svg" />
+						<img class="fragment" src="./images/compilation_process_forth.svg" />
+						<img class="fragment" src="./images/compilation_process_fifth.svg" />
+						<img class="fragment" src="./images/compilation_process_sixth.svg" />
+						<img class="fragment" src="./images/compilation_process_end.svg" />
+					</div>
+				</section>
+
+				<section>
+					<a href="https://godbolt.org/z/8WsfzW9n8"> Link to demo </a>
+				</section>
+
+				<section>
+					<h2>Ok, but how to build tools with it?</h2>
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> clang libtooling </li>
+							<li class="fragment"> clang matchers </li>
+							<li class="fragment"> clang transform </li>
+							<li class="fragment"> python bindings </li>
+						</lo>
+					</div>
+					<aside class="notes">
+						<lo>
+							<li> clang tools extra - rename/change namespace </li>
+							<li> Gcc tool chain is a pain, you will need to parse your code with clang.</li>
+						</lo>
+					</aside>
+				</section>
+
+			</section>
+
+			<section>
+				<section>
+					<h2>Find</h2>
+					<img class="r-stretch" src="./images/find2.webp" />
+				</section>
+
+				<section>
+					<h2>Matcher for wait problem</h2>
+					<pre><code class="language-isbl+" data-trim data-noescape data-line-numbers="|1|2|3|4|5|6|9">
+						m callExpr(
+							callee(
+								cxxMethodDecl(
+									allOf(
+										hasName("wait"),
+										ofClass(hasName("std::condition_variable")))
+									)
+							),
+							argumentCountIs(1)
+						)
+					</code></pre>
+
+					<div class="footer">
+						<a href="https://clang.llvm.org/docs/LibASTMatchersReference.html" id="noteslink"> [0] Matchers referece</a>
+					</div>
+
+					<aside class="notes">
+						<p> Clang matchers reference link. And useful links in the footers </p>
+					</aside>
+				</section>
+
+
+				<section>
+					<h2>Lost exceptions</h2>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						try {
+							do_something();
+						} catch (...) {
+							eat_exception_and_smile();
+						}
+						</code></pre>
+
+						<aside class="notes">
+							<li> We want to allow it only in specific files e.g. </li>
+						</aside>
+					</section>
+
+
+				<section>
+					<h2>And the matcher...</h2>
+
+					<pre><code language="language-isbl" data-trim data-noescape data-line-numbers="1|2|3|4">
+						m cxxCatchStmt(
+							unless(
+								hasDescendant(
+										cxxThrowExpr()
+								)
+							)
+						)
+					</code></pre>
+
+					<aside class="notes">
+						<lo>
+							<li> Locality of matchers. </li>
+							<li> Sometimes too declarative and hard to implement. </li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<a href="https://godbolt.org/z/sndGE1hWG"> Link to demo </a>
+				</section>
+
+				<section>
+					<h2> clang-query from the terminal example </h2>
+
+					<div class="footer">
+						<lo>
+							<li><a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/query-example">[0]
+									Github with examples</a></li>
+							<li><a
+									href="https://firefox-source-docs.mozilla.org/code-quality/static-analysis/writing-new/clang-query.html">[1]
+									Firefox docs on clang-query</a></li>
+						</lo>
+					</div>
+
+					<aside class="notes">
+						<lo>
+							<li>m functionDecl(hasName("AwesomeFunc")).</li>
+							<li>As complex as parsing the code. Complexity guesstimate is 1/3 of compilation.</li>
+							<li>Clang query usually used as part of matchers development, not on it's own.</li>
+							<li>There is an option to pass matcher from command line, so it is already some compliance tool.</li>
+							<li>All examples are available at my Github.</li>
+							<li>Firefox docs in footer links.</li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<h2> Conclusion </h2>
+
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> Matchers is a declarative language to query AST </li>
+							<li class="fragment"> Use clang-query to debug matchers on your code </li>
+							<li class="fragment"> Matchers are almost enough for enforcing </li>
+						</lo>
+					</div>
+
+					<aside class="notes">
+						<lo>
+							<li>Even though we can use clang query to enforcing, this is not a best tool.</li>
+						</lo>
+					</aside>
+				</section>
+
+
+			</section>
+
+			<section>
+				<section>
+					<h2>Fix and enforce</h2>
+					<img class="r-stretch" src="./images/fix.webp" />
+				</section>
+
+				<section>
+					<h2 class="r-fit-text">clang-transform</h2>
+				</section>
+
+				<section>
+					<h5>Pointer to reference argument<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						void AwesomeFunc(SomeObject* object);
+						void AwesomeFunc(SomeObject& object);
+
+						int main() {
+							SomeObject object;
+							AwesomeFunc(&object);
+						}
+					</code></pre>
+				</section>
+
+				<section>
+					<h5>Matcher<h5>
+							<pre><code class="language-isbl" data-trim data-noescape data-line-numbers="|1-4|7-9|10">
+						m callExpr(
+								callee(
+									functionDecl(
+										hasName("AwesomeFunc")
+									)
+								),
+								hasArgument(
+									0, expr(
+											hasType(pointerType())
+									).bind("argument")
+								)
+							)
+					</code></pre>
+				</section>
+
+				<section>
+					<h5>Transformation<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+								changeTo(
+									node("argument"),
+									transformer::maybeDeref("argument")
+								)
+					</code></pre>
+							<div class="footer">
+								<lo>
+									<li><a href="https://intel.github.io/llvm-docs/clang/ClangTransformerTutorial.html">[0]
+											Clang transform tutorial</a></li>
+
+								</lo>
+							</div>
+				</section>
+
+			<section>
+				<h5>More transformations<h5>
+				<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2|3|4">
+					insertBefore(node("id"), cat("some text"))
+					addInclude(node("id"), "myaweomelib.h")
+					changeTo(node("argument"), cat("new_name"));
+					changeTo(node("id"), access(node("id"), "myFieldName"))
+				</code></pre>
+
+			</section>
+
+				<section>
+					<h5>Interesting part of tool with clang-transform<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2-6|8-14">
+								<script type="text/template">
+					const std::string ArgId = "argument";
+					auto Rule = makeRule(
+							callExpr(callee(functionDecl(hasName("AwesomeFunc"))),
+												hasArgument(0,
+													expr(hasType(pointerType())).bind(ArgId))),
+							changeTo(node(ArgId), transformer::maybeDeref(ArgId)));
+
+					Transformer TransformerInstance(
+						Rule,
+						[&AllChanges](
+								Expected<llvm::MutableArrayRef<AtomicChange>> Changes
+							) {
+							...
+					});
+				</script>
+					</code></pre>
+
+							<aside class="notes">
+								<lo>
+									<li>Pay attention on rewrite. Stencil + rewrite to code, not to AST.</li>
+									<li>Hard to rewrite to something complex.</li>
+								</lo>
+							</aside>
+
+				</section>
+
+				<section>
+					<h2> Let's make it live! </h2>
+					<div class="footer">
+						<lo>
+							<li><a
+									href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/transform-example">[0] Github with example</a>
+							</li>
+						</lo>
+					</div>
+
+					<aside class="notes">
+						<lo>
+							<li>Link to Github with example.</li>
+							<li>We patched llvm clang tools extra and added new tool.</li>
+							<li>No way for upstream. If you use your build of clang, should be easy to support custom tool </li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> Wait, but... How to enforce? </h2>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text"> Clang tidy! </h2>
+					<div class="footer">
+						<lo>
+							<li><a
+									href="https://github.com/llvm/llvm-project/blob/main/clang-tools-extra/clang-tidy/abseil/CleanupCtadCheck.cpp#L40">[0] absl check example with clang tidy </a>
+							</li>
+						</lo>
+				</section>
+
+
+				<section>
+					<h2> Conclusion </h2>
+
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> clang-transform is like "search and replace" powered by clang matchers </li>
+							<li class="fragment"> clang-tidy support out of the box </li>
+							<li class="fragment"> relatively hard to build your first tool </li>
+							<li class="fragment"> no way to upstream a really custom tool </li>
+							<li class="fragment"> check clang-tools-extra before writing new :) </li>
+						</lo>
+					</div>
+				</section>
+			</section>
+
+			<section>
+
+				<section>
+					<h2>Generate</h2>
+					<img class="r-stretch" src="./images/generate.webp" />
+				</section>
+
+				<section>
+					<h5>Tons of span objects<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+								Span some_event("Long explanation what happened.");
+							</code></pre>
+							<aside class="notes">
+								<lo>
+									<li>We want sent strings off host</li>
+									<li>We know that in 99% construction is from string literal.</li>
+								</lo>
+							</aside>
+				</section>
+
+				<section>
+					<h5>Target is something like this<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1-5|7-11|13">
+								<script type="text/template">
+								enum class Events {
+									...
+									kSomeEvent = 179,
+									...
+								};
+
+								std::vector<std::string_view> s{
+									...,
+									"Long explanation what happened.",
+									...
+								};
+
+								Span some_event(Events::kSomeEvent);
+							</script>
+							</code></pre>
+
+							<aside class="notes">
+								<lo>
+									<li>Maybe we want generate this enum and array during build from json.</li>
+									<li>Another good option is proto enum.</li>
+									<li>Up until now tools was declarative.</li>
+									<li>No easy way to generate new code.</li>
+								</lo>
+							</aside>
+				</section>
+
+				<section>
+					<h2 class="r-fit-text">Python libclang</h2>
+					<div class="footer">
+						<a href="https://pypi.org/project/libclang/" id="noteslink"> [0] libclang PyPi</a>
+					</div>
+
+					<aside class="notes">
+						<lo>
+							<li>Other option is to implement custom matcher callback.</li>
+						</lo>
+					</aside>
+
+				</section>
+
+				<section>
+					<pre><code class="language-py" data-trim data-noescape data-line-numbers="|1|2-5|6-8|10-11">
+						def find_all_spans(cursor: Cursor, result: list):
+								if cursor.kind == CursorKind.VAR_DECL:
+										type_decl = cursor.type.get_declaration()
+										if type_decl.displayname != "Span":
+												return
+
+										var_name = cursor.displayname
+										message = find_string_literal(cursor)
+										result.append((var_name, message))
+
+								for c in cursor.get_children():
+										find_all_spans(c, result)
+					</code></pre>
+
+					<div class="footer">
+						<a href="https://github.com/feldsherov/pets-cattle-and-code-examples/tree/master/libclang-example"
+							id="noteslink"> [0] Github example</a>
+					</div>
+
+					<aside class="notes">
+						<lo>
+							<li>Good for fast and dirty solutions.</li>
+							<li>A bit under documented.</li>
+							<li>Worse diagnostics, when something goes wrong.</li>
+							<li>Other option is to implement custom matcher callback.</li>
+						</lo>
+					</aside>
+				</section>
+
+				<section>
+					<h5>Let's go live again!<h5>
+				</section>
+
+				<section>
+					<h2> Conclusion </h2>
+
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> libclang is awesome for fast hacking </li>
+							<li class="fragment"> if you need more, then custom tool is your choice </li>
+						</lo>
+					</div>
+				</section>
+
+			</section>
+
+			</section>
+
+			<section>
+				<section id="fit-text">
+					<h2> Talk message in one slide</h2>
+					<div style="text-align: left">
+						<lo>
+							<li class="fragment"> Projects became huge </li>
+							<li class="fragment"> There are repetitive tasks with code </li>
+							<li class="fragment"> These tasks are far beyond formatting and linting </li>
+							<li class="fragment"> Clang tooling allows to delegate them to machines </li>
+							<li class="fragment"> Use this opportunity </li>
+						</lo>
+					</div>
+				</section>
+
+				<section data-auto-animate>
+					<h2 class="r-fit-text">QUESTIONS?</h2>
+					<div class="footer">
+						<lo>
+							<li><a href="https://t.me/feldsherov" id="noteslink"> [0] Tg: @feldsherov</a></li>
+							<li><a href="https://link.in/svyat" id="noteslink"> [1] Link: svyat</a></li>
+							<li><a href="mailto:svyat@feldsherov.name" id="noteslink"> [2] Mail: svyat@feldsherov.name</a></li>
+						</lo>
+					</div>
+				</section>
+			</section>
+
+			</section>
+
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+		});
+	</script>
+</body>
+
+</html>
