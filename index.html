@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
 	<link rel="stylesheet" href="dist/theme/simple.css">
-	<link rel="stylesheet" href="presentation/css/terminal.css">
 	<link rel="stylesheet" href="custom.css">
 
 	<!-- Theme used for syntax highlighted code -->
@@ -24,26 +23,15 @@
 			<section>
 				<section>
 					<h2 class="r-fit-text">Hi, I am Svyat!</h2>
-
-					<aside class="notes">
-						<lo>
-							<li> Senior SWE at Google, working about virtual network telemetry in GCP.</li>
-							<li> Thankfully the talk is not related to Google. </li>
-							<li> For those how waiting a sign to turn on camera, this is the sign! </li>
-						</lo>
-					</aside>
-
 				</section>
 
 				<section>
-					<h2>My path TL/DR</h2>
-
+					<h2>My story TL/DR</h2>
 					<div class="r-stack">
 						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_first.svg" />
 						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_second.svg" />
 						<img class="fragment fade-in-then-out" src="./images/svyat_work_timeline_third.svg" />
 					</div>
-					<img src="" />
 
 					<aside class="notes">
 						<lo>
@@ -116,6 +104,34 @@
 						</lo>
 					</div>
 				</section>
+
+				<section>
+					<h2> Generate enum serialization </h2>
+					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						enum class Color {
+							GREEN  = 0,
+							YELLOW = 1,
+							RED    = 2,
+						};
+					</code></pre>
+				</section>
+
+				<section>
+					<h2> Generate enum serialization </h2>
+					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|3-4|">
+						std::string ColorToString(Color c) {
+							switch (c) {
+								case Color::GREEN:
+										return "GREEN";
+								case Color::YELLOW:
+										return "YELLOW";
+								case Color::RED:
+										return "RED";
+							}
+						}
+					</code></pre>
+				</section>
+
 
 			</section>
 
