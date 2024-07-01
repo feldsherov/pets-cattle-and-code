@@ -586,10 +586,10 @@
 					<h5>Interesting part of tool with clang-transform<h5>
 							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|8">
 								<script type="text/template">
-					class YourTransformTidyCheck :
+					class YourNewTidyCheck :
 									public utils::TransformerClangTidyCheck {
 					public:
-						YourTransformTidyCheck(
+						YourNewTidyCheck(
 							StringRef Name,
 							ClangTidyContext *Context
 						) : utils::TransformerClangTidyCheck(
