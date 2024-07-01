@@ -510,7 +510,7 @@
 
 			<section>
 				<h5>More transformations<h5>
-				<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2|3|4">
+				<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2|3|4|">
 					insertBefore(node("id"), cat("some text"))
 					addInclude(node("id"), "myaweomelib.h")
 					changeTo(node("argument"), cat("new_name"));
@@ -582,6 +582,26 @@
 						</lo>
 				</section>
 
+				<section>
+					<h5>Interesting part of tool with clang-transform<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|8">
+								<script type="text/template">
+					class YourTransformTidyCheck :
+									public utils::TransformerClangTidyCheck {
+					public:
+						YourTransformTidyCheck(
+							StringRef Name,
+							ClangTidyContext *Context
+						) : utils::TransformerClangTidyCheck(
+									MakeRule(),
+									Name,
+									Context) {
+						}
+					};
+				</script>
+			</code>
+			</pre>
+		</section>
 
 				<section>
 					<h2> Conclusion </h2>
@@ -620,7 +640,7 @@
 
 				<section>
 					<h5>Target is something like this<h5>
-							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1-5|7-11|13">
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1-5|7-11|13|">
 								<script type="text/template">
 								enum class Events {
 									...
