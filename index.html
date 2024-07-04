@@ -116,7 +116,6 @@
 				</section>
 
 				<section>
-					<h2> Generate enum serialization </h2>
 					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
 						enum class Color {
 							GREEN  = 0,
@@ -127,7 +126,6 @@
 				</section>
 
 				<section>
-					<h2> Generate enum serialization </h2>
 					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|3-4|">
 						std::string ColorToString(Color c) {
 							switch (c) {
@@ -142,6 +140,16 @@
 					</code></pre>
 				</section>
 
+				<section>
+					<h2> Automate what?</h2>
+					<div style="text-align: left">
+						<lo>
+							<li> Find </li>
+							<li> Fix and enforce </li>
+							<li> Generate </li>
+						</lo>
+					</div>
+				</section>
 
 			</section>
 
@@ -390,6 +398,31 @@
 						</lo>
 					</aside>
 				</section>
+
+				<section>
+					<h2>Won't match</h2>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						try {
+							do_something();
+						} catch (...) {
+							if (false) {
+								throw;
+							}
+						}
+						</code></pre>
+				</section>
+
+				<section>
+					<h2>Will match</h2>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						try {
+							do_something();
+						} catch (...) {
+							AlwaysThrow();
+						}
+						</code></pre>
+				</section>
+
 
 				<section data-background-iframe="https://godbolt.org/z/sndGE1hWG" data-background-interactive>
 
@@ -683,8 +716,8 @@
 				</section>
 
 				<section>
-					<pre><code class="language-py" data-trim data-noescape data-line-numbers="|1|2-5|7-9|11-12">
-						def find_all_spans(cursor: Cursor, result: list[SpanDescription]):
+					<pre><code class="language-py" data-trim data-noescape data-line-numbers="|1|2-5|7-10|12-13">
+						def find_all_spans(cursor: Cursor, result: list):
 							if cursor.kind == CursorKind.VAR_DECL:
 									type_decl = cursor.type.get_declaration()
 									if type_decl.displayname != "Span":
@@ -693,6 +726,7 @@
 									var_name = cursor.displayname
 									message_description = find_string_literal(cursor)
 									result.append(...)
+									return
 
 							for c in cursor.get_children():
 									find_all_spans(c, result)
