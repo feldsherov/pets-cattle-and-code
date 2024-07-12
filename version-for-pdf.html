@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
 	<link rel="stylesheet" href="dist/theme/simple.css">
-	<link rel="stylesheet" href="presentation/css/terminal.css">
 	<link rel="stylesheet" href="custom.css">
 
 	<!-- Theme used for syntax highlighted code -->
@@ -22,8 +21,12 @@
 	<div class="reveal">
 		<div class="slides">
 			<section>
+
+				<section data-background-image="images/cpp-on-sea-title.png" data-background-size="contain">
+				</section>
+
 				<section>
-					<h2 class="r-fit-text">Hi, I am Svyat!</h2>
+					<h2 class="r-fit-text">Hi, I am Slava!</h2>
 				</section>
 
 				<section>
@@ -79,7 +82,7 @@
 				</section>
 
 				<section>
-					<h2 class="r-fit-text"> Are huge projects only a corporations disease? </h2>
+					<h2 class="r-fit-text"> Are huge projects only a corporation's disease? </h2>
 				</section>
 
 				<section>
@@ -100,23 +103,53 @@
 					<div style="text-align: left">
 						<lo>
 							<li class="fragment"> Find </li>
+							<ul class="fragment">
+								<li>Find all function declarations with const std::string& argument</li>
+							</ul>
 							<li class="fragment"> Fix and enforce </li>
+							<ul class="fragment">
+								<li>Replace std::enable_if with concept's requires</li>
+							</ul>
 							<li class="fragment"> Generate </li>
 						</lo>
 					</div>
 				</section>
 
 				<section>
-					<h2> Generate </h2>
 					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
 						enum class Color {
-							GREEN = 0;
-							YELLOW = 1;
-							RED   = 2;
+							GREEN  = 0,
+							YELLOW = 1,
+							RED    = 2,
 						};
 					</code></pre>
 				</section>
 
+				<section>
+					<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|3-4|">
+						std::string ColorToString(Color c) {
+							switch (c) {
+								case Color::GREEN:
+										return "GREEN";
+								case Color::YELLOW:
+										return "YELLOW";
+								case Color::RED:
+										return "RED";
+							}
+						}
+					</code></pre>
+				</section>
+
+				<section>
+					<h2> Automate what?</h2>
+					<div style="text-align: left">
+						<lo>
+							<li> Find </li>
+							<li> Fix and enforce </li>
+							<li> Generate </li>
+						</lo>
+					</div>
+				</section>
 
 			</section>
 
@@ -133,7 +166,7 @@
 				<section>
 					<h5>std::condition_variable::wait<h5>
 
-						<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
 						class Worker {
 
 							void work() {
@@ -362,9 +395,33 @@
 				</section>
 
 				<section>
-					<a href="https://godbolt.org/z/sndGE1hWG"> Link to demo </a>
+					<h2>Won't match</h2>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						try {
+							do_something();
+						} catch (...) {
+							if (false) {
+								throw;
+							}
+						}
+						</code></pre>
 				</section>
 
+				<section>
+					<h2>Will match</h2>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers>
+						try {
+							do_something();
+						} catch (...) {
+							AlwaysThrow();
+						}
+						</code></pre>
+				</section>
+
+
+				<section>
+					<a href="https://godbolt.org/z/sndGE1hWG"> Link to demo </a>
+				</section>
 				<section>
 					<h2> clang-query from the terminal example </h2>
 
@@ -471,7 +528,7 @@
 
 			<section>
 				<h5>More transformations<h5>
-				<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2|3|4">
+				<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1|2|3|4|">
 					insertBefore(node("id"), cat("some text"))
 					addInclude(node("id"), "myaweomelib.h")
 					changeTo(node("argument"), cat("new_name"));
@@ -543,6 +600,26 @@
 						</lo>
 				</section>
 
+				<section>
+					<h5>Interesting part of tool with clang-transform<h5>
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|8">
+								<script type="text/template">
+					class YourNewTidyCheck :
+									public utils::TransformerClangTidyCheck {
+					public:
+						YourNewTidyCheck(
+							StringRef Name,
+							ClangTidyContext *Context
+						) : utils::TransformerClangTidyCheck(
+									MakeRule(),
+									Name,
+									Context) {
+						}
+					};
+				</script>
+			</code>
+			</pre>
+		</section>
 
 				<section>
 					<h2> Conclusion </h2>
@@ -581,7 +658,7 @@
 
 				<section>
 					<h5>Target is something like this<h5>
-							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1-5|7-11|13">
+							<pre><code class="language-cpp" data-trim data-noescape data-line-numbers="|1-5|7-11|13|">
 								<script type="text/template">
 								enum class Events {
 									...
@@ -624,19 +701,20 @@
 				</section>
 
 				<section>
-					<pre><code class="language-py" data-trim data-noescape data-line-numbers="|1|2-5|6-8|10-11">
+					<pre><code class="language-py" data-trim data-noescape data-line-numbers="|1|2-5|7-10|12-13">
 						def find_all_spans(cursor: Cursor, result: list):
-								if cursor.kind == CursorKind.VAR_DECL:
-										type_decl = cursor.type.get_declaration()
-										if type_decl.displayname != "Span":
-												return
+							if cursor.kind == CursorKind.VAR_DECL:
+									type_decl = cursor.type.get_declaration()
+									if type_decl.displayname != "Span":
+											return
 
-										var_name = cursor.displayname
-										message = find_string_literal(cursor)
-										result.append((var_name, message))
+									var_name = cursor.displayname
+									message_description = find_string_literal(cursor)
+									result.append(...)
+									return
 
-								for c in cursor.get_children():
-										find_all_spans(c, result)
+							for c in cursor.get_children():
+									find_all_spans(c, result)
 					</code></pre>
 
 					<div class="footer">
